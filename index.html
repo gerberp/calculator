@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Calculator</title>
+<style>
+body{font-family:system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;flex-direction:column;background:#f0f2f5}
+.calc{background:#fff;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);width:260px}
+#display{width:100%;box-sizing:border-box;font-size:2rem;text-align:right;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+button{font-size:1.3rem;padding:14px;border:none;border-radius:8px;background:#e9ecef;cursor:pointer}
+button:hover{background:#dee2e6}.op{background:#4c6ef5;color:#fff}.eq{background:#40c057;color:#fff}.clr{background:#fa5252;color:#fff}
+</style></head><body>
+<h1 style="color:#333;margin:0 0 20px">Calculator</h1>
+<div class="calc"><input id="display" readonly value="0">
+<div class="grid">
+<button>7</button><button>8</button><button>9</button><button class="op">+</button>
+<button>4</button><button>5</button><button>6</button><button class="op">-</button>
+<button>1</button><button>2</button><button>3</button><button class="clr">C</button>
+<button>0</button><button>.</button><button class="eq" style="grid-column:span 2">=</button>
+</div></div>
+<footer style="margin-top:20px;color:#888;font-size:.85rem">Simple add &amp; subtract calculator · keyboard: digits, + − . Enter, Esc</footer>
+<script>
+const d=document.getElementById('display');let cur='0',acc=null,op=null,fresh=false;
+const show=v=>d.value=v;
+function calc(){const b=parseFloat(cur);if(acc===null)return b;return op==='+'?acc+b:acc-b;}
+function press(k){
+ if(/[0-9]/.test(k)){cur=(fresh||cur==='0')?k:cur+k;fresh=false;show(cur);}
+ else if(k==='.'){if(fresh){cur='0';fresh=false;}if(!cur.includes('.'))cur+='.';show(cur);}
+ else if(k==='+'||k==='-'){acc=op?calc():parseFloat(cur);op=k;fresh=true;cur=String(+acc.toFixed(10));show(cur);}
+ else if(k==='='||k==='Enter'){if(op){cur=String(+calc().toFixed(10));acc=null;op=null;fresh=true;show(cur);}}
+ else if(k==='C'||k==='Escape'){cur='0';acc=null;op=null;show(cur);}
+}
+document.querySelectorAll('button').forEach(b=>b.onclick=()=>press(b.textContent));
+document.addEventListener('keydown',e=>press(e.key));
+</script></body></html>
