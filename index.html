@@ -22,9 +22,13 @@ const d=document.getElementById('display');let cur='0',acc=null,op=null,fresh=fa
 const show=v=>d.value=v;
 function calc(){const b=parseFloat(cur);if(acc===null)return b;return op==='+'?acc+b:acc-b;}
 function press(k){
- if(/[0-9]/.test(k)){cur=(fresh||cur==='0')?k:cur+k;fresh=false;show(cur);}
+ if(/^[0-9]$/.test(k)){cur=(fresh||cur==='0')?k:cur+k;fresh=false;show(cur);}
  else if(k==='.'){if(fresh){cur='0';fresh=false;}if(!cur.includes('.'))cur+='.';show(cur);}
- else if(k==='+'||k==='-'){acc=op?calc():parseFloat(cur);op=k;fresh=true;cur=String(+acc.toFixed(10));show(cur);}
+ else if(k==='+'||k==='-'){
+  // Replace a pending operator until the next operand has been entered.
+  if(op&&fresh){op=k;return;}
+  acc=op?calc():parseFloat(cur);op=k;fresh=true;cur=String(+acc.toFixed(10));show(cur);
+ }
  else if(k==='='||k==='Enter'){if(op){cur=String(+calc().toFixed(10));acc=null;op=null;fresh=true;show(cur);}}
  else if(k==='C'||k==='Escape'){cur='0';acc=null;op=null;show(cur);}
 }
